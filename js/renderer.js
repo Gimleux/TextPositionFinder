@@ -6,17 +6,17 @@ import { HIGHLIGHT_COLORS } from './config.js';
  * @param {number|null} singlePos The index of the single character to mark.
  * @param {Array<object>} ranges An array of range objects {start, end}.
  * @param {boolean} isEndInclusive Whether the end of a range is inclusive.
- * @returns {string} The generated HTML string.
+ * @returns {DocumentFragment} A document fragment containing the generated nodes.
  */
 export function renderOutput(text, singlePos, ranges, isEndInclusive) {
+    const fragment = document.createDocumentFragment();
     if (!text) {
-        return '';
+        return fragment;
     }
 
     const effectiveRanges = isEndInclusive ? ranges.map(range => ({...range, end: range.end + 1})) : ranges;
 
     const boundaryPoints = getBoundaryPoints(text.length, singlePos, effectiveRanges);
-    const htmlParts = [];
 
     boundaryPoints.forEach((boundaryPoint, i) => {
         const start = boundaryPoints[i];
@@ -25,13 +25,14 @@ export function renderOutput(text, singlePos, ranges, isEndInclusive) {
         if (start >= end) return;
 
         const segment = {start, end};
-        const segmentText = escapeHtml(text.substring(start, end));
+        const segmentText = text.substring(start, end);
         const styling = getStylingForSegment(segment, singlePos, effectiveRanges);
 
-        htmlParts.push(buildSegmentHtml(segmentText, styling));
+        const node = buildSegmentNode(segmentText, styling);
+        fragment.appendChild(node);
     });
 
-    return htmlParts.join('');
+    return fragment;
 }
 
 /**
@@ -124,28 +125,24 @@ function getStylingForSegment(segment, singlePos, ranges) {
 }
 
 /**
- * Wraps a text segment in a <span> with the given classes and styles, if any.
+ * Creates a DOM node for a text segment, either a TextNode or a <span> wrapping a TextNode.
  * @param {string} text The text content of the segment.
  * @param {{classes: string[], style: string}} styling The styling to apply.
- * @returns {string} The HTML for the segment.
+ * @returns {Node} The created DOM node (either a TextNode or an Element).
  */
-function buildSegmentHtml(text, styling) {
+function buildSegmentNode(text, styling) {
     const { classes, style } = styling;
+
     if (classes.length === 0) {
-        return text;
+        return document.createTextNode(text);
     }
 
-    const classAttr = `class="${classes.join(' ')}"`;
-    const styleAttr = style ? `style="${style}"` : '';
+    const span = document.createElement('span');
+    span.className = classes.join(' ');
+    if (style) {
+        span.style.cssText = style;
+    }
+    span.appendChild(document.createTextNode(text));
 
-    return `<span ${classAttr} ${styleAttr}>${text}</span>`;
-}
-
-/**
- * Escapes HTML special characters to prevent XSS.
- * @param {string} text The text to escape.
- * @returns {string} The escaped text.
- */
-function escapeHtml(text) {
-    return text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    return span;
 }

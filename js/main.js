@@ -22,8 +22,8 @@ function syncStateFromUI() {
  * Renders the output display based on the current state.
  */
 function render() {
-    const outputHtml = renderOutput(state.text, state.singlePos, state.ranges, state.isEndInclusive);
-    dom.outputContainer.innerHTML = outputHtml;
+    const outputFragment = renderOutput(state.text, state.singlePos, state.ranges, state.isEndInclusive);
+    dom.outputContainer.replaceChildren(outputFragment);
 }
 
 /**
