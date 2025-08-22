@@ -238,3 +238,66 @@ legend {
         flex: 0 0 auto;
     }
 }
+
+.inclusive-toggle {
+    display: flex;
+    align-items: center;
+}
+
+.toggle-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: var(--text-muted-color);
+    user-select: none;
+}
+
+.inclusive-toggle-checkbox {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    position: absolute;
+}
+
+.toggle-switch {
+    position: relative;
+    width: 40px;
+    height: 22px;
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 11px;
+    transition: background-color 0.2s ease;
+}
+
+.toggle-switch::before {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: var(--text-muted-color);
+    top: 2px;
+    left: 2px;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.inclusive-toggle-checkbox:checked + .toggle-switch {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.inclusive-toggle-checkbox:checked + .toggle-switch::before {
+    background-color: white;
+    transform: translateX(18px);
+}
+
+.inclusive-toggle-checkbox:focus-visible + .toggle-switch {
+    box-shadow: 0 0 0 3px rgba(79, 134, 247, 0.3);
+}
+
+.global-toggle-container {
+    margin-bottom: 1rem;
+    padding-left: 0.25rem;
+}

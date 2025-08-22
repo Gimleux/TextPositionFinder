@@ -1,13 +1,24 @@
 import { HIGHLIGHT_COLORS } from './config.js';
 
+/**
+ * A collection of cached DOM element references for performance and convenience.
+ */
 export const dom = {
     mainTextInput: document.getElementById('main-text'),
     singlePosInput: document.getElementById('single-pos'),
     rangeListContainer: document.getElementById('range-list'),
     addRangeBtn: document.getElementById('add-range-btn'),
-    outputContainer: document.getElementById('output-container')
+    outputContainer: document.getElementById('output-container'),
+    globalInclusiveToggle: document.getElementById('global-inclusive-toggle')
 };
 
+/**
+ * Factory function to create a new range control element.
+ * It creates the element but does not append it to the DOM.
+ * @param {object} range - The range object from the state ({id, start, end}).
+ * @param {number} index - The index of the range, used for color selection and ARIA labels.
+ * @returns {HTMLElement} The created div element for the range item.
+ */
 export function getNewRangeElement(range, index) {
     const rangeItem = document.createElement('div');
     rangeItem.className = 'range-item';
