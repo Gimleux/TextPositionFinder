@@ -1,4 +1,4 @@
-import {HIGHLIGHT_CLASSES} from './config.js';
+import { HIGHLIGHT_COLORS } from './config.js';
 
 /**
  * The main public function. Orchestrates the rendering process.
@@ -13,7 +13,7 @@ export function renderOutput(text, singlePos, ranges, isEndInclusive) {
         return '';
     }
 
-    const effectiveRanges = isEndInclusive ? ranges.map(range => ({...range, end: range.end +1})) : ranges;
+    const effectiveRanges = isEndInclusive ? ranges.map(range => ({...range, end: range.end + 1})) : ranges;
 
     const boundaryPoints = getBoundaryPoints(text.length, singlePos, effectiveRanges);
     const htmlParts = [];
@@ -26,9 +26,9 @@ export function renderOutput(text, singlePos, ranges, isEndInclusive) {
 
         const segment = {start, end};
         const segmentText = escapeHtml(text.substring(start, end));
-        const classes = getClassesForSegment(segment, singlePos, effectiveRanges);
+        const styling = getStylingForSegment(segment, singlePos, effectiveRanges);
 
-        htmlParts.push(buildSegmentHtml(segmentText, classes));
+        htmlParts.push(buildSegmentHtml(segmentText, styling));
     });
 
     return htmlParts.join('');
@@ -62,44 +62,83 @@ function getBoundaryPoints(textLength, singlePos, ranges) {
 }
 
 /**
- * Determines which CSS classes apply to a given text segment.
+ * Generates a background style string from a list of colors.
+ * If one color, returns a simple background-color.
+ * If multiple, creates a striped linear gradient to show all colors.
+ * @param {string[]} colors - Array of RGBA color strings from the config.
+ * @returns {string} A CSS background style string.
+ */
+function createBackgroundStyle(colors) {
+    // Use a lighter alpha for text highlighting for better readability.
+    const highlightColors = colors.map(c => c.replace(', 0.8)', ', 0.3)'));
+
+    if (highlightColors.length === 0) {
+        return '';
+    }
+    if (highlightColors.length === 1) {
+        return `background-color: ${highlightColors[0]};`;
+    }
+
+    // Create a striped gradient for multiple overlapping ranges
+    const gradientStops = highlightColors.map((color, i) => {
+        const start = i * (100 / highlightColors.length);
+        const end = (i + 1) * (100 / highlightColors.length);
+        return `${color} ${start}%, ${color} ${end}%`;
+    }).join(', ');
+
+    return `background: linear-gradient(to bottom, ${gradientStops});`;
+}
+
+/**
+ * Determines which CSS classes and inline styles apply to a given text segment.
  * @param {{start: number, end: number}} segment The segment to check.
  * @param {number|null} singlePos The single position marker.
  * @param {Array<object>} ranges The array of range objects.
- * @returns {string[]} An array of applicable CSS class names.
+ * @returns {{classes: string[], style: string}} An object with classes and an inline style string.
  */
-function getClassesForSegment(segment, singlePos, ranges) {
+function getStylingForSegment(segment, singlePos, ranges) {
     const classes = [];
+    const activeColors = [];
 
     // Check for single position marker
     if (singlePos !== null && segment.start >= singlePos && segment.end <= singlePos + 1) {
         classes.push('position-marker');
     }
 
-    // Check for range highlights
+    // Check for range highlights and collect their colors
     ranges.forEach((range, index) => {
         if (range.start !== null && range.end !== null) {
             if (segment.start >= range.start && segment.end <= range.end) {
-                const colorClass = HIGHLIGHT_CLASSES[index % HIGHLIGHT_CLASSES.length];
-                classes.push('highlight', colorClass);
+                const color = HIGHLIGHT_COLORS[index % HIGHLIGHT_COLORS.length];
+                activeColors.push(color);
             }
         }
     });
 
-    return [...new Set(classes)];
+    const style = createBackgroundStyle(activeColors);
+    if (activeColors.length > 0) {
+        classes.push('highlight');
+    }
+
+    return { classes: [...new Set(classes)], style };
 }
 
 /**
- * Wraps a text segment in a <span> with the given classes, if any.
+ * Wraps a text segment in a <span> with the given classes and styles, if any.
  * @param {string} text The text content of the segment.
- * @param {string[]} classes The CSS classes to apply.
+ * @param {{classes: string[], style: string}} styling The styling to apply.
  * @returns {string} The HTML for the segment.
  */
-function buildSegmentHtml(text, classes) {
+function buildSegmentHtml(text, styling) {
+    const { classes, style } = styling;
     if (classes.length === 0) {
         return text;
     }
-    return `<span class="${classes.join(' ')}">${text}</span>`;
+
+    const classAttr = `class="${classes.join(' ')}"`;
+    const styleAttr = style ? `style="${style}"` : '';
+
+    return `<span ${classAttr} ${styleAttr}>${text}</span>`;
 }
 
 /**

@@ -14,6 +14,7 @@ A simple, client-side web app to highlight specific character positions and rang
 -   Specify a single character position (by index) to mark it with an arrow.
 -   Define multiple start/end ranges to highlight segments of text.
 -   Each range is automatically color-coded for easy differentiation.
+-   Handles overlapping ranges by displaying a striped gradient of all applicable colors.
 -   Pure client-side vanilla HTML, CSS, and JavaScript. **No data is ever sent to a server.**
 
 ## ⚠️ Quality

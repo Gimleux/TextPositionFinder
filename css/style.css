@@ -203,30 +203,6 @@ legend {
     border-radius: 3px;
 }
 
-.highlight-color-0 {
-    background-color: rgba(79, 134, 247, 0.3);
-}
-
-.highlight-color-1 {
-    background-color: rgba(46, 184, 134, 0.3);
-}
-
-.highlight-color-2 {
-    background-color: rgba(250, 173, 20, 0.3);
-}
-
-.highlight-color-3 {
-    background-color: rgba(235, 87, 87, 0.3);
-}
-
-.highlight-color-4 {
-    background-color: rgba(187, 134, 252, 0.3);
-}
-
-.highlight-color-5 {
-    background-color: rgba(3, 201, 215, 0.3);
-}
-
 @media (max-width: 900px) {
     .main-container {
         flex-direction: column;
