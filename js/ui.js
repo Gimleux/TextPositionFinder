@@ -22,7 +22,7 @@ export const dom = {
 export function getNewRangeElement(range, index) {
     const rangeItem = document.createElement('div');
     rangeItem.className = 'range-item';
-    rangeItem.dataset.id = range.id;
+    rangeItem.dataset.id = range.id.toString();
 
     const color = HIGHLIGHT_COLORS[index % HIGHLIGHT_COLORS.length];
 
