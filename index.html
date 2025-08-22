@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Position Finder</title>
+
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/favicons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/favicons/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/favicons/apple-touch-icon.png">
+    <link rel="manifest" href="site.webmanifest">
+    <link rel="shortcut icon" href="assets/favicons/favicon.ico">
+    
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<main class="main-container">
+
+    <aside class="controls">
+        <h1>Text Position Finder</h1>
+
+        <div class="control-group" style="flex-grow: 1; display: flex; flex-direction: column;">
+            <label for="main-text">Text to Analyze</label>
+            <textarea id="main-text" placeholder="Paste your text here..."></textarea>
+        </div>
+
+        <div class="control-group">
+            <label for="single-pos">Show Single Position (Index)</label>
+            <input type="number" id="single-pos" min="0" placeholder="e.g., 150">
+        </div>
+
+        <fieldset>
+            <legend>Highlight Ranges</legend>
+            <div id="range-list">
+            </div>
+            <button id="add-range-btn" class="add-btn">Add New Range</button>
+        </fieldset>
+    </aside>
+
+    <section class="display-area">
+        <pre id="output-container"></pre>
+    </section>
+
+</main>
+
+<script type="module" src="js/main.js"></script>
+
+</body>
+</html>
